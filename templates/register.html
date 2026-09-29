@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Register · CommitLearn{% endblock %}
+{% block content %}
+<div class="mx-auto max-w-md">
+    <h1 class="text-2xl font-semibold">Create your account</h1>
+    <p class="mt-2 text-sm text-slate-400">Start with an empty dashboard. You can keep at most 3 active commitments.</p>
+
+    <form method="POST" class="mt-8 space-y-4 rounded-2xl border border-line bg-panel p-6">
+        <div>
+            <label for="username" class="mb-1 block text-sm text-slate-300">Username</label>
+            <input id="username" name="username" required
+                   class="w-full rounded-lg border border-line bg-ink px-3 py-2 text-slate-100 outline-none focus:border-emerald-500">
+        </div>
+        <div>
+            <label for="email" class="mb-1 block text-sm text-slate-300">Email</label>
+            <input id="email" name="email" type="email" required
+                   class="w-full rounded-lg border border-line bg-ink px-3 py-2 text-slate-100 outline-none focus:border-emerald-500">
+        </div>
+        <div>
+            <label for="password" class="mb-1 block text-sm text-slate-300">Password</label>
+            <input id="password" name="password" type="password" minlength="6" required
+                   class="w-full rounded-lg border border-line bg-ink px-3 py-2 text-slate-100 outline-none focus:border-emerald-500">
+        </div>
+        <div>
+            <label for="confirm_password" class="mb-1 block text-sm text-slate-300">Confirm password</label>
+            <input id="confirm_password" name="confirm_password" type="password" minlength="6" required
+                   class="w-full rounded-lg border border-line bg-ink px-3 py-2 text-slate-100 outline-none focus:border-emerald-500">
+        </div>
+        <button type="submit" class="w-full rounded-lg bg-emerald-500 py-2.5 font-medium text-ink hover:bg-emerald-400">
+            Register
+        </button>
+    </form>
+    <p class="mt-4 text-center text-sm text-slate-400">
+        Already have an account?
+        <a href="{{ url_for('login') }}" class="text-emerald-400 hover:text-emerald-300">Log in</a>
+    </p>
+</div>
+{% endblock %}

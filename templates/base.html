@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CommitLearn{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ink: "#0b0f14",
+                        panel: "#121820",
+                        line: "#243041"
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-full bg-ink text-slate-100 antialiased">
+    <div class="min-h-screen flex flex-col">
+        <header class="border-b border-line bg-panel/80 backdrop-blur">
+            <nav class="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
+                <a href="{{ url_for('index') if g.user else url_for('login') }}" class="text-lg font-semibold tracking-tight text-emerald-400">
+                    CommitLearn
+                </a>
+                {% if g.user %}
+                <div class="flex items-center gap-3 text-sm">
+                    <span class="hidden sm:inline text-slate-400">{{ g.user.username }}</span>
+                    <a href="{{ url_for('create_goal') }}" class="rounded-lg bg-emerald-500 px-3 py-1.5 font-medium text-ink hover:bg-emerald-400">
+                        New commitment
+                    </a>
+                    <a href="{{ url_for('logout') }}" class="rounded-lg border border-line px-3 py-1.5 text-slate-300 hover:border-slate-500 hover:text-white">
+                        Logout
+                    </a>
+                </div>
+                {% else %}
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="{{ url_for('login') }}" class="text-slate-300 hover:text-white">Login</a>
+                    <a href="{{ url_for('register') }}" class="rounded-lg bg-emerald-500 px-3 py-1.5 font-medium text-ink hover:bg-emerald-400">
+                        Register
+                    </a>
+                </div>
+                {% endif %}
+            </nav>
+        </header>
+
+        <main class="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="mb-6 space-y-2">
+                        {% for category, message in messages %}
+                            {% set tone = {
+                                'error': 'border-rose-500/40 bg-rose-500/10 text-rose-200',
+                                'success': 'border-emerald-500/40 bg-emerald-500/10 text-emerald-200',
+                                'info': 'border-sky-500/40 bg-sky-500/10 text-sky-200'
+                            } %}
+                            <p class="rounded-lg border px-3 py-2 text-sm {{ tone.get(category, 'border-line bg-panel text-slate-200') }}">
+                                {{ message }}
+                            </p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

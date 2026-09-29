@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · CommitLearn{% endblock %}
+{% block content %}
+<div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+        <h1 class="text-2xl font-semibold">Your dashboard</h1>
+        <p class="mt-1 text-sm text-slate-400">Maximum {{ max_active }} active goals. Extra commitments wait in the backlog.</p>
+    </div>
+    <p class="text-sm text-slate-400">{{ active_goals|length }} / {{ max_active }} active</p>
+</div>
+
+<section class="mt-8">
+    <h2 class="mb-4 text-lg font-medium text-emerald-400">Active commitments</h2>
+    {% if active_goals %}
+    <div class="grid gap-4 md:grid-cols-3">
+        {% for goal in active_goals %}
+        <article class="rounded-2xl border border-emerald-500/30 bg-panel p-5">
+            <h3 class="text-lg font-semibold">{{ goal.title }}</h3>
+            <p class="mt-2 text-sm text-slate-400">{{ goal.target_days }} days · {{ goal.checkpoint_done }} / {{ goal.checkpoint_total }} checkpoints</p>
+            <div class="mt-4 flex gap-2">
+                <form method="POST" action="{{ url_for('complete_goal', goal_id=goal.id) }}">
+                    <button type="submit" class="rounded-lg bg-emerald-500 px-3 py-1.5 text-sm font-medium text-ink hover:bg-emerald-400">
+                        Complete
+                    </button>
+                </form>
+                <form method="POST" action="{{ url_for('delete_goal', goal_id=goal.id) }}" onsubmit="return confirm('Delete this commitment?');">
+                    <button type="submit" class="rounded-lg border border-line px-3 py-1.5 text-sm text-slate-300 hover:border-rose-400 hover:text-rose-300">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="rounded-2xl border border-dashed border-line bg-panel/50 px-6 py-10 text-center">
+        <p class="text-slate-300">No active commitments yet.</p>
+        <p class="mt-1 text-sm text-slate-500">Add a goal to start. Nothing is pre-filled for new accounts.</p>
+        <a href="{{ url_for('create_goal') }}" class="mt-4 inline-block rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-ink hover:bg-emerald-400">
+            Create your first commitment
+        </a>
+    </div>
+    {% endif %}
+</section>
+
+<section class="mt-10">
+    <h2 class="mb-4 text-lg font-medium text-slate-300">Backlog</h2>
+    {% if backlog_goals %}
+    <div class="space-y-3">
+        {% for goal in backlog_goals %}
+        <article class="flex flex-col gap-3 rounded-2xl border border-line bg-panel p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h3 class="font-semibold">{{ goal.title }}</h3>
+                <p class="text-sm text-slate-400">Waiting in line · {{ goal.target_days }} days · {{ goal.checkpoint_total }} checkpoints</p>
+            </div>
+            <form method="POST" action="{{ url_for('delete_goal', goal_id=goal.id) }}" onsubmit="return confirm('Delete this backlog commitment?');">
+                <button type="submit" class="rounded-lg border border-line px-3 py-1.5 text-sm text-slate-300 hover:border-rose-400 hover:text-rose-300">
+                    Delete
+                </button>
+            </form>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="rounded-2xl border border-line bg-panel px-6 py-6 text-sm text-slate-400">Backlog is empty.</p>
+    {% endif %}
+</section>
+{% endblock %}
