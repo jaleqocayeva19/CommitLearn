@@ -317,3 +317,33 @@ def delete_goal(goal_id):
 if __name__ == "__main__":
     init_db()
     app.run(debug=True)
+from datetime import datetime, timedelta
+
+def update_user_streak(user_id):
+    today = datetime.now().date()
+    
+    with get_db() as db:
+        user = db.execute("SELECT current_streak, last_active_date FROM users WHERE id = ?", (user_id,)).fetchone()
+        
+        if not user:
+            return
+        
+        current_streak = user['current_streak'] or 0
+        last_active = user['last_active_date']
+        
+        if last_active:
+            last_date = datetime.strptime(last_active, '%Y-%m-%d').date()
+            if last_date == today:
+                return  # Bu gün artıq streak hesablanıb
+            elif last_date == today - timedelta(days=1):
+                current_streak += 1  # Ardıcıl günlər, streak artır
+            else:
+                current_streak = 1  # Gün ötürülüb, streak sıfırlanır
+        else:
+            current_streak = 1  # İlk fəallıq
+            
+        db.execute(
+            "UPDATE users SET current_streak = ?, last_active_date = ? WHERE id = ?",
+            (current_streak, today.strftime('%Y-%m-%d'), user_id)
+        )
+        db.commit()
